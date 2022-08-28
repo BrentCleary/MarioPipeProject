@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public LerpMovement lerpScript;
 
     public Rigidbody playerRB;
-    public GameObject pipe;
+    public PipeWarpBehavior pipeWarpBehavior;
     public float horizontalInput;
     public float moveForce = 2;
     public float jumpForce = 10;
@@ -37,13 +37,18 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKey(KeyCode.G) && onWarpPipe)
         {
-
-            lerpScript.lerpActive = true;
-            lerpScript.startPos = new Vector3(pipePosition.x, transform.position.y, transform.position.z);
-            lerpScript.endPos = lerpScript.startPos + lerpScript.endPosOffset;
-            lerpScript.PlayerLerp();
+            lerpScript.lerpEnterActive = true;
+            lerpScript.enterStartPos = new Vector3(pipePosition.x, transform.position.y, transform.position.z);
+            lerpScript.enterEndPos = lerpScript.enterStartPos + lerpScript.endPosOffset;
+            lerpScript.PipeEntryLerp();
         }
 
+        if(lerpScript.lerpExitActive)
+        {
+            lerpScript.exitStartPos = pipeWarpBehavior.exitPipePosition;
+            lerpScript.exitEndPos = pipeWarpBehavior.exitPipePosition - lerpScript.endPosOffset;
+
+        }
 
         if(Input.GetKeyDown(KeyCode.R))
         {
@@ -76,6 +81,8 @@ public class PlayerController : MonoBehaviour
         {
             onWarpPipe = true;
             pipePosition = other.gameObject.GetComponent<Transform>().position;
+            pipeWarpBehavior = other.gameObject.GetComponentInParent<PipeWarpBehavior>();
+
         }
         else
         {
