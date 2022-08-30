@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     public Renderer rend;
 
     public Vector3 pipePosition;
+    public Vector3 exitPipePos;
+
+    public GameObject collisionPipe;
 
 
     // Start is called before the first frame update
@@ -38,17 +41,19 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKey(KeyCode.G) && onWarpPipe)
         {
             lerpScript.lerpEnterActive = true;
+
+            // Sets Enter Start/End Points in LerpScript
             lerpScript.enterStartPos = new Vector3(pipePosition.x, transform.position.y, transform.position.z);
             lerpScript.enterEndPos = lerpScript.enterStartPos + lerpScript.endPosOffset;
+            
+            // Sets Exit Start/End Points in LerpScript
+            lerpScript.exitStartPos = exitPipePos;
+            lerpScript.exitEndPos = exitPipePos - lerpScript.endPosOffset;
+            
             lerpScript.PipeEntryLerp();
-        }
-
-        if(lerpScript.lerpExitActive)
-        {
-            lerpScript.exitStartPos = pipeWarpBehavior.exitPipePosition;
-            lerpScript.exitEndPos = pipeWarpBehavior.exitPipePosition - lerpScript.endPosOffset;
 
         }
+
 
         if(Input.GetKeyDown(KeyCode.R))
         {
@@ -62,12 +67,10 @@ public class PlayerController : MonoBehaviour
     void PlayerMovement()
     {
         horizontalInput = Input.GetAxis("Horizontal");
-        
         if(horizontalInput != 0)
         {
             transform.Translate(Vector3.right * horizontalInput*  moveForce * Time.deltaTime);
         }
-
         if(Input.GetKeyDown(KeyCode.Space))
         {
             playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -75,13 +78,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void OnCollisionEnter(Collision other)
+
+    public void OnCollisionEnter(Collision other)
     {
         if(other.gameObject.CompareTag("PipeCenter"))
         {
             onWarpPipe = true;
-            pipePosition = other.gameObject.GetComponent<Transform>().position;
-            pipeWarpBehavior = other.gameObject.GetComponentInParent<PipeWarpBehavior>();
+            collisionPipe = other.transform.parent.gameObject;
+            pipeWarpBehavior = collisionPipe.GetComponent<PipeWarpBehavior>();
+            pipeWarpBehavior.Invoke("PipeExitSwitcher", 0);
+            pipePosition = collisionPipe.GetComponent<Transform>().position;
+            exitPipePos = pipeWarpBehavior.exitPipePosition;
 
         }
         else

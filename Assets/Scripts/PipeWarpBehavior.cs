@@ -6,7 +6,12 @@ public class PipeWarpBehavior : MonoBehaviour
 {
     public GameObject[] pipePair;
     public GameObject player;
+
     public bool warpActive = false;
+
+    public int pipeIndex;
+
+    public PlayerController playerControllerScript;
     public LerpMovement lerpScript;
 
     public Vector3 exitPipePosition;
@@ -16,14 +21,34 @@ public class PipeWarpBehavior : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
+        playerControllerScript = player.GetComponent<PlayerController>();
         lerpScript = player.GetComponent<LerpMovement>();
-        exitPipePosition = pipePair[1].GetComponent<Transform>().position;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+
         // WarpBetweenPipes();
+
+        exitPipePosition = pipePair[pipeIndex].GetComponent<Transform>().position;
+
+
+    }
+
+    public void PipeExitSwitcher()
+    {
+        if(playerControllerScript.collisionPipe == pipePair[0])
+        {
+            pipeIndex = 1;
+        }
+
+        if(playerControllerScript.collisionPipe == pipePair[1])
+        {
+            pipeIndex = 0;
+        }
+
     }
 
     // Warp is set active at end of PipeEntryLerp    
@@ -31,8 +56,9 @@ public class PipeWarpBehavior : MonoBehaviour
     {
         if(warpActive)
         {
-            player.transform.position = exitPipePosition;
             lerpScript.lerpExitActive = true;
+            lerpScript.PipeExitLerp();
+            warpActive = false;
 
         }
     }
@@ -42,7 +68,8 @@ public class PipeWarpBehavior : MonoBehaviour
 
 }
 
-    // Identify exit pipe after lerp
+    // Get index of entry pipe
+    // Identify exitStartPos on collision
     // Place Mario below exit pipe
     // Lerp his position out of the pipe
 
@@ -50,6 +77,5 @@ public class PipeWarpBehavior : MonoBehaviour
     // Transition scene to a new scene on entry, and exit from a pipe in new scene
 
     // Setup a statement that switches between indexs of pipes
-
 
 

@@ -6,14 +6,17 @@ public class LerpMovement : MonoBehaviour
 {
     public PlayerController playerController;
     public PipeWarpBehavior pipeWarpBehavior;
+
     public Rigidbody playerRB;
+    public GameObject player;
+
     public Vector3 enterStartPos;
     public Vector3 enterEndPos;
     public Vector3 exitStartPos;
     public Vector3 exitEndPos;
     public Vector3 endPosOffset = new Vector3(0, -2.0f, 0);
+
     public float lerpPct = 0;
-    
     public float lerpDuration = 1f;
     public float elapsedTime = 0f;
     public bool lerpEnterActive = false;
@@ -26,6 +29,7 @@ public class LerpMovement : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         playerRB = GetComponent<Rigidbody>();
+        player = GameObject.Find("Player");
 
     }
 
@@ -33,6 +37,7 @@ public class LerpMovement : MonoBehaviour
     {
         // Gets the position of the active pipe
         pipePosition = playerController.pipePosition;
+        
         // Gets the PipeWarpBehavior script on active pipe
         pipeWarpBehavior = playerController.pipeWarpBehavior;
 
@@ -67,6 +72,8 @@ public class LerpMovement : MonoBehaviour
     {
         if(lerpExitActive == true)
         {
+            player.transform.position = playerController.exitPipePos;
+
             playerRB.useGravity = false;
 
             elapsedTime += Time.deltaTime;
@@ -79,7 +86,6 @@ public class LerpMovement : MonoBehaviour
                 lerpExitActive = false;
                 playerRB.useGravity = true;
                 elapsedTime = 0;
-                pipeWarpBehavior.warpActive = false;
 
             }
         }

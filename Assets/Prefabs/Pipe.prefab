@@ -50,6 +50,9 @@ MonoBehaviour:
   - {fileID: 0}
   player: {fileID: 0}
   warpActive: 0
+  pipeIndex: 0
+  playerControllerScript: {fileID: 0}
+  lerpScript: {fileID: 0}
   exitPipePosition: {x: 0, y: 0, z: 0}
 --- !u!1 &7554808226698421591
 GameObject:
